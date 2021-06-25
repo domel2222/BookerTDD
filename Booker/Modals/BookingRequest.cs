@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace Booker.Tests.Processor
+namespace Booker.Modals
 {
-    internal class BookingRequest
+    public class BookingRequest
     {
         public string FirstName { get; set; }
-        public string LatsName { get; set; }
+        public string LastName { get; set; }
         public string Email { get; set; }
         public DateTime DateTime { get; set; }
     }
