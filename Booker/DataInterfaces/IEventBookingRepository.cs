@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Booker.DataInterfaces
 {
-    public interface IBookingRepository
+    public interface IEventBookingRepository
     {
-        void Save(Booking booking);
+        void Save(EventBooking booking);
     }
 }

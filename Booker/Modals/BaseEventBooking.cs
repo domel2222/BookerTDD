@@ -2,7 +2,7 @@
 
 namespace Booker.Modals
 {
-    public abstract class BaseBooking
+    public abstract class BaseEventBooking
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

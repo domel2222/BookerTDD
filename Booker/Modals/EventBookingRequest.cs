@@ -2,7 +2,7 @@
 
 namespace Booker.Modals
 {
-    public class BookingRequest : BaseBooking
+    public class EventBookingRequest : BaseEventBooking
     {
 
     }

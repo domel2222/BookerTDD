@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,16 +9,22 @@ using Booker.Processor;
 using Booker.DataInterfaces;
 using NSubstitute;
 using Moq;
+using System.Collections.Generic;
 
 namespace Booker.Tests.Processor
 {
-    public class BookingRequestProcessorTests
+    public class EventBookingRequestProcessorTests
     {
-        private readonly BookingRequestProcessor _processor;
-        private readonly BookingRequestProcessor _processorMock;
-        private readonly Mock<IBookingRepository> _bookingRepositoryMock;
-        private IBookingRepository _bookingRepository = Substitute.For<IBookingRepository>();
-        private readonly BookingRequest _request = new BookingRequest
+        private readonly EventBookingRequestProcessor _processorMock;
+        private readonly Mock<IEventRepository> _eventRepositoryMock;
+        private readonly Mock<IEventBookingRepository> _bookingRepositoryMock;
+
+
+        private readonly EventBookingRequestProcessor _processor;
+        private IEventBookingRepository _bookingRepository = Substitute.For<IEventBookingRepository>();
+        private IEventRepository _eventRepository = Substitute.For<IEventRepository>();
+        private IEnumerable<Event> _availableEvent;
+        private readonly EventBookingRequest _request = new EventBookingRequest
         {
             FirstName = "Marco",
             LastName = "Polo",
@@ -27,18 +32,26 @@ namespace Booker.Tests.Processor
             DateTime = new DateTime(2021, 5, 25),
         };
 
-        public BookingRequestProcessorTests()
+        public EventBookingRequestProcessorTests()
         {
-            _processor = new BookingRequestProcessor(_bookingRepository);
-            _bookingRepositoryMock = new Mock<IBookingRepository>();
-            _processorMock = new BookingRequestProcessor(_bookingRepositoryMock.Object);
+            _availableEvent = new List<Event> { new Event() };
+            //Nsubstitude
+            _processor = new EventBookingRequestProcessor(_bookingRepository, _eventRepository);
+            _eventRepository.GetAvailableEvent(_request.DateTime).Returns(_availableEvent);
+
+            //Moq
+            _bookingRepositoryMock = new Mock<IEventBookingRepository>();
+            _eventRepositoryMock = new Mock<IEventRepository>();
+
+            _eventRepositoryMock.Setup(x => x.GetAvailableEvent(_request.DateTime)).Returns(_availableEvent);
+            _processorMock = new EventBookingRequestProcessor(_bookingRepositoryMock.Object, _eventRepositoryMock.Object);
         }
         [Fact]
         public void ShouldReturnDeskBookingResultWithRequestValues()
         {
 
             //act
-            BookingResult result = _processor.BookEvent(_request);
+            EventBookingResult result = _processor.BookEvent(_request);
 
             //assert 
 
@@ -63,7 +76,7 @@ namespace Booker.Tests.Processor
         [Fact]
         public void ShouldSaveEventBooking()
         {
-            Booking savedBooking = null;
+            EventBooking savedBooking = null;
 
             //_bookingRepository.When(x=>x.Save(Arg.Any<Booking>())
             //     .Do(Callback.First(
@@ -72,12 +85,12 @@ namespace Booker.Tests.Processor
             //         savedBooking = booking;
             //     });
 
-            _bookingRepository.When(x => x.Save(Arg.Any<Booking>())).Do(book => { savedBooking = (Booking)book[0]; });
+            _bookingRepository.When(x => x.Save(Arg.Any<EventBooking>())).Do(book => { savedBooking = (EventBooking)book[0]; });
 
             _processor.BookEvent(_request);
 
             
-            _bookingRepository.Received(1).Save(Arg.Any<Booking>());
+            _bookingRepository.Received(1).Save(Arg.Any<EventBooking>());
 
             savedBooking.ShouldNotBeNull();
 
@@ -91,10 +104,10 @@ namespace Booker.Tests.Processor
         [Fact]
         public void ShouldSaveEventBookingMoc()
         {
-            Booking savedBooking = null;
+            EventBooking savedBooking = null;
 
-            _bookingRepositoryMock.Setup(x => x.Save(It.IsAny<Booking>()))
-                .Callback<Booking>(booking =>
+            _bookingRepositoryMock.Setup(x => x.Save(It.IsAny<EventBooking>()))
+                .Callback<EventBooking>(booking =>
                 {
                     savedBooking = booking;
 
@@ -102,13 +115,19 @@ namespace Booker.Tests.Processor
 
             _processorMock.BookEvent(_request);
 
-            _bookingRepositoryMock.Verify(x => x.Save(It.IsAny<Booking>()), Times.Once);
+            _bookingRepositoryMock.Verify(x => x.Save(It.IsAny<EventBooking>()), Times.Once);
 
             Assert.NotNull(savedBooking);
             Assert.Equal(_request.FirstName, savedBooking.FirstName);
             Assert.Equal(_request.LastName, savedBooking.LastName);
             Assert.Equal(_request.Email, savedBooking.Email);
             Assert.Equal(_request.DateTime, savedBooking.DateTime);
+        }
+
+        [Fact]
+        public void ShouldNotSaveEventBookingIfNoEventIsAvailable()
+        {
+
         }
     }
 }
