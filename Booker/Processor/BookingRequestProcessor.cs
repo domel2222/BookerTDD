@@ -1,12 +1,16 @@
-﻿using Booker.Modals;
+﻿using Booker.DataInterfaces;
+using Booker.Modals;
 using System;
 
 namespace Booker.Processor
 {
     public class BookingRequestProcessor
     {
-        public BookingRequestProcessor()
+        private readonly IBookingRepository _bookingRepository;
+
+        public BookingRequestProcessor(IBookingRepository bookingRepository)
         {
+            _bookingRepository = bookingRepository;
         }
 
         public BookingResult BookEvent(BookingRequest request)
@@ -15,6 +19,14 @@ namespace Booker.Processor
             {
                 throw new ArgumentNullException(nameof(request));
             }
+
+            _bookingRepository.Save(new Booking
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                DateTime = request.DateTime,
+            });
 
             return new BookingResult
             {

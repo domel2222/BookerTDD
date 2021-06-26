@@ -2,11 +2,8 @@
 
 namespace Booker.Modals
 {
-    public class BookingResult
+    public class BookingResult : BaseBooking
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public DateTime DateTime { get; set; }
+
     }
 }

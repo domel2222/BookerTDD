@@ -1,12 +1,7 @@
-﻿using System;
-
-namespace Booker.Modals
+﻿namespace Booker.Modals
 {
-    public class Booking
+    public class Booking : BaseBooking
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public DateTime DateTime { get; set; }
+
     }
 }
