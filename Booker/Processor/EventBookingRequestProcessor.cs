@@ -23,12 +23,18 @@ namespace Booker.Processor
                 throw new ArgumentNullException(nameof(request));
             }
 
-            var availableEvent = _eventRepository.GetAvailableEvent(request.DateTime);
-            if (availableEvent.Count() > 0)
+            var availableEvents = _eventRepository.GetAvailableEvent(request.DateTime);
+            if (availableEvents.Count() > 0)
             {
-                _bookingRepository.Save(Create<EventBooking>(request));
-            }
+              
 
+            var availableEvent = availableEvents.First();
+            var eventBooking = Create<EventBooking>(request);
+            eventBooking.EventId = availableEvent.Id;
+
+            _bookingRepository.Save(eventBooking);
+
+            }
             return Create<EventBookingResult>(request);
         }
 

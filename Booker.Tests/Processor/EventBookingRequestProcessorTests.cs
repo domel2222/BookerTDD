@@ -34,7 +34,7 @@ namespace Booker.Tests.Processor
 
         public EventBookingRequestProcessorTests()
         {
-            _availableEvent = new List<Event> { new Event() };
+            _availableEvent = new List<Event> { new Event { Id = 13}};
             //Nsubstitude
             _processor = new EventBookingRequestProcessor(_bookingRepository, _eventRepository);
             _eventRepository.GetAvailableEvent(_request.DateTime).Returns(_availableEvent);
@@ -76,6 +76,7 @@ namespace Booker.Tests.Processor
         [Fact]
         public void ShouldSaveEventBooking()
         {
+            //_availableEvent.Clear();
             EventBooking savedBooking = null;
 
             //_bookingRepository.When(x=>x.Save(Arg.Any<Booking>())
@@ -98,13 +99,14 @@ namespace Booker.Tests.Processor
             _request.LastName.ShouldBe(savedBooking.LastName);
             _request.Email.ShouldBe(savedBooking.Email);
             _request.DateTime.ShouldBe(savedBooking.DateTime);
+            _availableEvent.First().Id.ShouldBe(savedBooking.EventId);
         }
 
 
         [Fact]
         public void ShouldSaveEventBookingMoc()
         {
-            _availableEvent.Clear();
+            //_availableEvent.Clear();
             EventBooking savedBooking = null;
 
             _bookingRepositoryMock.Setup(x => x.Save(It.IsAny<EventBooking>()))
@@ -123,6 +125,7 @@ namespace Booker.Tests.Processor
             Assert.Equal(_request.LastName, savedBooking.LastName);
             Assert.Equal(_request.Email, savedBooking.Email);
             Assert.Equal(_request.DateTime, savedBooking.DateTime);
+            Assert.Equal(_availableEvent.First().Id, savedBooking.EventId);
         }
 
         [Fact]
