@@ -12,34 +12,51 @@ namespace Booker.Tests.Processor
 {
     public class BookingRequestProcessorTests
     {
+        private readonly BookingRequestProcessor _processor = new BookingRequestProcessor();
+        private readonly BookingRequest _request = new BookingRequest
+        {
+            FirstName = "Marco",
+            LastName = "Polo",
+            Email = "marco@nanan.com",
+            DateTime = new DateTime(2021, 5, 25),
+        };
+        
+
         [Fact]
         public void ShouldReturnDeskBookingResultWithRequestValues()
         {
 
             //Arrange
-            var request = new BookingRequest
-            {
-                FirstName = "Marco",
-                LastName = "Polo",
-                Email = "marco@nanan.com",
-                DateTime = new DateTime(2021, 5, 25),
-            };
-
             
-            var processor = new BookingRequestProcessor();
+
+           
             //act
-            BookingResult result =  processor.BookEvent(request);
+            BookingResult result =  _processor.BookEvent(_request);
 
             //assert 
 
             result.ShouldNotBeNull();
 
-            result.FirstName.ShouldBe(request.FirstName);
-            result.LastName.ShouldBe(request.LastName);
-            result.Email.ShouldBe(request.Email);
-            result.DateTime.ShouldBe(request.DateTime);
+            result.FirstName.ShouldBe(_request.FirstName);
+            result.LastName.ShouldBe(_request.LastName);
+            result.Email.ShouldBe(_request.Email);
+            result.DateTime.ShouldBe(_request.DateTime);
         }
         
+        [Fact]
+        public void ShouldThrowExceptionIfRequestIsNull()
+        {
+           
+            var exception = Should.Throw<ArgumentNullException>(() => _processor.BookEvent(null));
 
+
+            exception.ParamName.ShouldBe("request");
+        }
+
+        [Fact]
+        public void ShouldSaveEventBooking()
+        {
+            _processor.BookEvent(_request);
+        }
     }
 }

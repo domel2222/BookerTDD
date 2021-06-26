@@ -11,6 +11,11 @@ namespace Booker.Processor
 
         public BookingResult BookEvent(BookingRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             return new BookingResult
             {
                 FirstName = request.FirstName,
