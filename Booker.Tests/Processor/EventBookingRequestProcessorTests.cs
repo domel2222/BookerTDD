@@ -23,7 +23,7 @@ namespace Booker.Tests.Processor
         private readonly EventBookingRequestProcessor _processor;
         private IEventBookingRepository _bookingRepository = Substitute.For<IEventBookingRepository>();
         private IEventRepository _eventRepository = Substitute.For<IEventRepository>();
-        private IEnumerable<Event> _availableEvent;
+        private List<Event> _availableEvent;
         private readonly EventBookingRequest _request = new EventBookingRequest
         {
             FirstName = "Marco",
@@ -104,6 +104,7 @@ namespace Booker.Tests.Processor
         [Fact]
         public void ShouldSaveEventBookingMoc()
         {
+            _availableEvent.Clear();
             EventBooking savedBooking = null;
 
             _bookingRepositoryMock.Setup(x => x.Save(It.IsAny<EventBooking>()))
@@ -125,9 +126,25 @@ namespace Booker.Tests.Processor
         }
 
         [Fact]
+        public void ShouldNotSaveEventBookingIfNoEventIsAvailableMock()
+        {
+            //ensure no event is available
+            _availableEvent.Clear();
+
+            _processorMock.BookEvent(_request);
+
+            _bookingRepositoryMock.Verify(x => x.Save(It.IsAny<EventBooking>()), Times.Never);
+        }
+
+        [Fact]
         public void ShouldNotSaveEventBookingIfNoEventIsAvailable()
         {
+            //ensure no event is available
+            _availableEvent.Clear();
 
+            _processor.BookEvent(_request);
+
+            _bookingRepository.DidNotReceive().Save(Arg.Any<EventBooking>());
         }
     }
 }
