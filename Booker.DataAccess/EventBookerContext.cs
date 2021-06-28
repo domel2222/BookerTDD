@@ -6,6 +6,9 @@ namespace Booker.DataAccess
 {
     public class EventBookerContext : DbContext
     {
+        public DbSet<Event> Events { get; set; }
+        public DbSet<EventBooking> EventBookings { get; set; }
+
         public EventBookerContext(DbContextOptions<EventBookerContext> options) 
             : base(options)
         {
@@ -15,6 +18,9 @@ namespace Booker.DataAccess
         {
             SeedData(modelBuilder);
         }
+
+
+        
 
         private void SeedData(ModelBuilder modelBuilder)
         {
