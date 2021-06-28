@@ -11,7 +11,7 @@ namespace Booker.Validation
     {
         public DateWithoutTimeAttribute()
         {
-            ErrorMessage = "Date must not conatain time";
+            ErrorMessage = "Date must not contain time";
         }
 
         public override bool IsValid(object value)
