@@ -164,5 +164,51 @@ namespace Booker.Tests.Processor
 
             expectedResultCode.ShouldBe(result.Code);
         }
+
+        [Theory]
+        [InlineData(5, true)]
+        [InlineData(null, false)]
+        public void ShouldReturnExpectedEventBookingIdMoq(
+            int? expectedEventId,
+            bool isAvaliable)
+        {
+            if (!isAvaliable)
+            {
+                _availableEvent.Clear();
+            }
+            else
+            {
+                _bookingRepositoryMock.Setup(x => x.Save(It.IsAny<EventBooking>()))
+                    .Callback<EventBooking>(eventBooking =>
+                    {
+                        eventBooking.Id = expectedEventId.Value;
+                    });
+            }
+            var result = _processor.BookEvent(_request);
+
+            expectedEventId.ShouldBe(result.EventBookingId);
+        }
+
+        [Theory]
+        [InlineData(5, true)]
+        [InlineData(null, false)]
+        public void ShouldReturnExpectedEventBookingIdNSubstitude(
+            int? expectedEventId,
+            bool isAvaliable)
+        {
+            if (!isAvaliable)
+            {
+                _availableEvent.Clear();
+            }
+            else
+            {
+                _bookingRepository.When(x => x.Save(Arg.Any<EventBooking>()))
+                    .Do(eventBooking => 
+                    { ((EventBooking)eventBooking[0]).Id = expectedEventId.Value; });
+            }
+            var result = _processor.BookEvent(_request);
+
+            expectedEventId.ShouldBe(result.EventBookingId);
+        }
     }
 }
