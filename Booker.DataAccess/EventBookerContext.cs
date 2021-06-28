@@ -19,8 +19,10 @@ namespace Booker.DataAccess
         private void SeedData(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Event>().HasData(
-                
-                new Event {Id = 1,  })
+
+                new Event { Id = 1, Description = "Catching crabs" },
+                new Event { Id = 2, Description = "Hunting for mosquitoes" }
+                );
         }
     }
 }
