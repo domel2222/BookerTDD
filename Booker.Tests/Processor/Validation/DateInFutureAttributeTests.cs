@@ -26,5 +26,13 @@ namespace Booker.Tests.Processor.Validation
 
             expectedIsValid.ShouldBe(isValid);
         }
+
+        [Fact]
+        public void ShouldHaveExpectedError()
+        {
+            var attribute = new DateInFutureAttribute();
+
+            attribute.ErrorMessage.ShouldBe("Date must be in the future");
+        }
     }
 }

@@ -11,6 +11,11 @@ namespace Booker.Validation
     {
         private Func<DateTime> _dateTimeProvider;
 
+        public DateInFutureAttribute()
+        {
+            ErrorMessage = "Date must be in the future";
+        }
+
         public DateInFutureAttribute(Func<DateTime> dateTimeNow)
         {
             this._dateTimeProvider = dateTimeNow;
