@@ -34,6 +34,7 @@ namespace Booker.Processor
 
                 _bookingRepository.Save(eventBooking);
 
+                result.EventBookingId = eventBooking.Id;
                 result.Code = EventBookingResultCode.Success;
             }
             else
@@ -42,8 +43,6 @@ namespace Booker.Processor
             }
             return result;
         }
-
-
 
         private T Create<T>(EventBookingRequest request) where T : BaseEventBooking, new()
         {

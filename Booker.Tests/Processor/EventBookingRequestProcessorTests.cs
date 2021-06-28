@@ -184,7 +184,7 @@ namespace Booker.Tests.Processor
                         eventBooking.Id = expectedEventId.Value;
                     });
             }
-            var result = _processor.BookEvent(_request);
+            var result = _processorMock.BookEvent(_request);
 
             expectedEventId.ShouldBe(result.EventBookingId);
         }
