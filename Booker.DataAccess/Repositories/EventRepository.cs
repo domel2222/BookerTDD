@@ -17,9 +17,21 @@ namespace Booker.DataAccess.Repositories
             this._context = context;
         }
 
-        public IEnumerable<Event> GetAvailableEvent(DateTime dateTime)
+
+
+
+        // to refactor this method
+        public IEnumerable<Event> GetAvailableEvent(DateTime dateBook)
         {
-            
+
+            // Today Events so you can't book it
+            var bookedEventIds = _context.EventBookings
+                .Where(x => x.DateTime == dateBook)
+                .Select(x => x.EventId);
+                
+
+
+            return _context.Events.Where(x => !bookedEventIds.Contains(x.Id));
         }
     }
 }
