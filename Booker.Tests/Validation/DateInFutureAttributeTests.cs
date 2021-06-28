@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Shouldly;
 
-namespace Booker.Tests.Processor.Validation
+namespace Booker.Tests.Validation
 {
     public class DateInFutureAttributeTests
     {

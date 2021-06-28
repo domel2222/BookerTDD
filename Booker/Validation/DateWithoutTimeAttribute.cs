@@ -14,7 +14,6 @@ namespace Booker.Validation
             ErrorMessage = "Date must not conatain time";
         }
 
-
         public override bool IsValid(object value)
         {
             var isValid = false;
