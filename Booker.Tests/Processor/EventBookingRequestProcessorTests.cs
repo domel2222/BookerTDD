@@ -1,15 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using Shouldly;
+﻿using Booker.DataInterfaces;
+using Booker.Enums;
 using Booker.Modals;
 using Booker.Processor;
-using Booker.DataInterfaces;
-using NSubstitute;
 using Moq;
+using NSubstitute;
+using Shouldly;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
 namespace Booker.Tests.Processor
 {
@@ -34,7 +33,7 @@ namespace Booker.Tests.Processor
 
         public EventBookingRequestProcessorTests()
         {
-            _availableEvent = new List<Event> { new Event { Id = 13}};
+            _availableEvent = new List<Event> { new Event { Id = 13 } };
             //Nsubstitude
             _processor = new EventBookingRequestProcessor(_bookingRepository, _eventRepository);
             _eventRepository.GetAvailableEvent(_request.DateTime).Returns(_availableEvent);
@@ -90,7 +89,7 @@ namespace Booker.Tests.Processor
 
             _processor.BookEvent(_request);
 
-            
+
             _bookingRepository.Received(1).Save(Arg.Any<EventBooking>());
 
             savedBooking.ShouldNotBeNull();
@@ -148,6 +147,22 @@ namespace Booker.Tests.Processor
             _processor.BookEvent(_request);
 
             _bookingRepository.DidNotReceive().Save(Arg.Any<EventBooking>());
+        }
+
+        [Theory]
+        [InlineData(EventBookingResultCode.Success, true)]
+        [InlineData(EventBookingResultCode.NoEventAvailable, false)]
+        public void ShouldReturnExpectedResultCode(
+            EventBookingResultCode expectedResultCode,
+            bool isAvaliable)
+        {
+            if (!isAvaliable)
+            {
+                _availableEvent.Clear();
+            }
+            var result = _processor.BookEvent(_request);
+
+            expectedResultCode.ShouldBe(result.Code);
         }
     }
 }

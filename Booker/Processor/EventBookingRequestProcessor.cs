@@ -1,4 +1,5 @@
 ﻿using Booker.DataInterfaces;
+using Booker.Enums;
 using Booker.Modals;
 using System;
 using System.Linq;
@@ -22,21 +23,27 @@ namespace Booker.Processor
             {
                 throw new ArgumentNullException(nameof(request));
             }
+            var result = Create<EventBookingResult>(request);
 
             var availableEvents = _eventRepository.GetAvailableEvent(request.DateTime);
-            if (availableEvents.Count() > 0)
+            if (availableEvents.FirstOrDefault() is Event availableEvent)
             {
-              
+                availableEvent = availableEvents.First();
+                var eventBooking = Create<EventBooking>(request);
+                eventBooking.EventId = availableEvent.Id;
 
-            var availableEvent = availableEvents.First();
-            var eventBooking = Create<EventBooking>(request);
-            eventBooking.EventId = availableEvent.Id;
+                _bookingRepository.Save(eventBooking);
 
-            _bookingRepository.Save(eventBooking);
-
+                result.Code = EventBookingResultCode.Success;
             }
-            return Create<EventBookingResult>(request);
+            else
+            {
+                result.Code = EventBookingResultCode.NoEventAvailable;
+            }
+            return result;
         }
+
+
 
         private T Create<T>(EventBookingRequest request) where T : BaseEventBooking, new()
         {
