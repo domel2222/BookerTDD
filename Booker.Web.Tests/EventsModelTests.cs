@@ -11,20 +11,21 @@ namespace Booker.Web.Tests
 {
     public class EventsModelTests
     {
-        [Fact]
-        public void GetAllEventsMock()
-        {
-            //arrange
-            var events = new[]
+
+        private readonly Event[] _events = new[]
             {
                 new Event(),
                 new Event(),
                 new Event()
             };
 
+        [Fact]
+        public void GetAllEvents_Mock()
+        {
+            //arrange
             var eventRepositoryMock = new Mock<IEventRepository>();
 
-            eventRepositoryMock.Setup(x => x.GetAll()).Returns(events);
+            eventRepositoryMock.Setup(x => x.GetAll()).Returns(_events);
 
             var eventsModel = new EventsModel(eventRepositoryMock.Object);
 
@@ -32,7 +33,25 @@ namespace Booker.Web.Tests
             eventsModel.OnGet();
 
             //arrange
-            events.ShouldBe(eventsModel.Events);
+            _events.ShouldBe(eventsModel.Events);
+        }
+
+        [Fact]
+        public void GetAllEvents_Nsubstitude()
+        {
+            //arrange
+            var eventRepositoryNsub = Substitute.For<IEventRepository>();
+
+            eventRepositoryNsub.GetAll().Returns(_events);
+
+            var eventsModel = new EventsModel(eventRepositoryNsub);
+
+            //act
+            eventsModel.OnGet();
+
+            //arrange
+            _events.ShouldBe(eventsModel.Events);
+
         }
     }
 }
