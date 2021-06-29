@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Shouldly;
+using Booker.DataAccess.Tests.Infrastructure;
 
 namespace Booker.DataAccess.Tests.Repositories
 {
@@ -19,12 +20,7 @@ namespace Booker.DataAccess.Tests.Repositories
             //arrange
             var date = new DateTime(2021, 7, 2);
 
-            var options = new DbContextOptionsBuilder<EventBookerContext>()
-                    .UseInMemoryDatabase(databaseName: "ShouldReturnTheAvailableEvent")
-                    .Options;
-
-
-            using (var context = new EventBookerContext(options))
+            using (var context = DbContextFactory.CreateDb(nameof(ReturnTheAvailableEvent)))
             {
                 context.Events.Add(new Event { Id = 1 });
                 context.Events.Add(new Event { Id = 2 });
@@ -33,18 +29,15 @@ namespace Booker.DataAccess.Tests.Repositories
                 context.EventBookings.Add(new EventBooking { EventId = 1, DateTime = date });
                 context.EventBookings.Add(new EventBooking { EventId = 2, DateTime = date.AddDays(13) });
 
-
                 context.SaveChanges();
             }
 
-            using (var context = new EventBookerContext(options))
+            using (var context = DbContextFactory.CreateDb(nameof(ReturnTheAvailableEvent)))
             {
                 var repository = new EventRepository(context);
 
                 //act
                 var eventResult = repository.GetAvailableEvent(date);
-
-
                 //assert
                 eventResult.Count().ShouldBe(2);
                 eventResult.ShouldContain(x => x.Id == 2);
@@ -52,16 +45,10 @@ namespace Booker.DataAccess.Tests.Repositories
                 eventResult.ShouldNotContain(x => x.Id == 1);
 
             }
-
-          
         }
         [Fact]
-        public void ReturnAllEvents()
+        public void GetAll_ReturnAllEvents()
         {
-            var options = new DbContextOptionsBuilder<EventBookerContext>()
-                .UseInMemoryDatabase(databaseName: "ShouldGetAll")
-                .Options;
-
             var patternList = new List<Event>
             {
                 new Event(),
@@ -69,7 +56,7 @@ namespace Booker.DataAccess.Tests.Repositories
                 new Event(),
             };
 
-            using (var context = new EventBookerContext(options))
+            using (var context = DbContextFactory.CreateDb(nameof(GetAll_ReturnAllEvents)))
             {
                 foreach (var item in patternList)
                 {
@@ -77,8 +64,9 @@ namespace Booker.DataAccess.Tests.Repositories
                     context.SaveChanges();
                 }
             }
+
             List<Event> actualList;
-            using ( var context = new EventBookerContext(options))
+            using ( var context = DbContextFactory.CreateDb(nameof(GetAll_ReturnAllEvents)))
             {
                 var repository = new EventRepository(context);
                 actualList = repository.GetAll().ToList();

@@ -26,10 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Booker.DataAccess\Booker.DataAccess.csproj" />
   </ItemGroup>
 

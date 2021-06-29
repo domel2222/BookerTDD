@@ -13,6 +13,5 @@ namespace Booker.DataAccess.Tests.Repositories
     public class EventBookingRepositoryTests
     {
 
-
     }
 }
