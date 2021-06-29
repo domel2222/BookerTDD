@@ -22,10 +22,6 @@ namespace Booker.DataAccess.Repositories
 
             return _context.Events.OrderBy(x => x.Id);
         }
-
-
-
-
         // to refactor this method
         public IEnumerable<Event> GetAvailableEvent(DateTime dateBook)
         {
@@ -35,8 +31,6 @@ namespace Booker.DataAccess.Repositories
                 .Where(x => x.DateTime == dateBook)
                 .Select(x => x.EventId);
                 
-
-
             return _context.Events.Where(x => !bookedEventIds.Contains(x.Id));
         }
     }
