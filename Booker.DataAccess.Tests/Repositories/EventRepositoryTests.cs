@@ -14,8 +14,9 @@ namespace Booker.DataAccess.Tests.Repositories
     public class EventRepositoryTests
     {
         [Fact]
-        public void ShouldReturnTheAvailableEvent()
+        public void ReturnTheAvailableEvent()
         {
+            //arrange
             var date = new DateTime(2021, 7, 2);
 
             var options = new DbContextOptionsBuilder<EventBookerContext>()
@@ -46,8 +47,44 @@ namespace Booker.DataAccess.Tests.Repositories
 
                 //assert
                 eventResult.Count().ShouldBe(2);
+                eventResult.ShouldContain(x => x.Id == 2);
+                eventResult.ShouldContain(x => x.Id == 3);
+                eventResult.ShouldNotContain(x => x.Id == 1);
 
             }
+
+          
+        }
+        [Fact]
+        public void ReturnAllEvents()
+        {
+            var options = new DbContextOptionsBuilder<EventBookerContext>()
+                .UseInMemoryDatabase(databaseName: "ShouldGetAll")
+                .Options;
+
+            var patternList = new List<Event>
+            {
+                new Event(),
+                new Event(),
+                new Event(),
+            };
+
+            using (var context = new EventBookerContext(options))
+            {
+                foreach (var item in patternList)
+                {
+                    context.Add(item);
+                    context.SaveChanges();
+                }
+            }
+            List<Event> actualList;
+            using ( var context = new EventBookerContext(options))
+            {
+                var repository = new EventRepository(context);
+                actualList = repository.GetAll().ToList();
+            }
+
+            actualList.Count().ShouldBe(patternList.Count());
         }
     }
 }

@@ -17,6 +17,11 @@ namespace Booker.DataAccess.Repositories
             this._context = context;
         }
 
+        public IEnumerable<Event> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
 
 
 

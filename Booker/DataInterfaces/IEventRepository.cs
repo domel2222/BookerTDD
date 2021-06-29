@@ -7,6 +7,8 @@ namespace Booker.DataInterfaces
     public interface IEventRepository
     {
         IEnumerable<Event> GetAvailableEvent(DateTime dateTime);
+
+        IEnumerable<Event> GetAll();
     }
 
 }
