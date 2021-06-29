@@ -17,9 +17,15 @@ namespace Booker.DataAccess.Repositories
             this._context = context;
         }
 
+        public IEnumerable<EventBooking> GetAll()
+        {
+            return _context.EventBookings.OrderBy(x => x.DateTime);
+        }
+
         public void Save(EventBooking booking)
         {
-            throw new NotImplementedException();
+            _context.EventBookings.Add(booking);
+            _context.SaveChanges();
         }
     }
 }

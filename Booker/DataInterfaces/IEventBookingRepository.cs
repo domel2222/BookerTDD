@@ -10,5 +10,6 @@ namespace Booker.DataInterfaces
     public interface IEventBookingRepository
     {
         void Save(EventBooking booking);
+        IEnumerable<EventBooking> GetAll();
     }
 }
