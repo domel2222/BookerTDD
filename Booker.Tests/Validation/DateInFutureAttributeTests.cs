@@ -16,7 +16,7 @@ namespace Booker.Tests.Validation
         [InlineData(false, -1)]
         [InlineData(false, 0)]
         [InlineData(true, 1)]
-        public void ShouldValidateDateIsInTheFuture(bool expectedIsValid, int secondsToAdd)
+        public void ValidateDateIsInTheFuture(bool expectedIsValid, int secondsToAdd)
         {
             var dateTimeNow = new DateTime(2021, 6, 28);
 

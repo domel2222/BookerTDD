@@ -19,7 +19,8 @@ namespace Booker.DataAccess.Repositories
 
         public IEnumerable<Event> GetAll()
         {
-            throw new NotImplementedException();
+
+            return _context.Events.OrderBy(x => x.Id);
         }
 
 

@@ -103,7 +103,7 @@ namespace Booker.Tests.Processor
 
 
         [Fact]
-        public void ShouldSaveEventBookingMoc()
+        public void Save_EventBookingMoc()
         {
             //_availableEvent.Clear();
             EventBooking savedBooking = null;
