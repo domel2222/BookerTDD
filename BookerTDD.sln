@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booker.DataAccess", "Booker
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booker.DataAccess.Tests", "Booker.DataAccess.Tests\Booker.DataAccess.Tests.csproj", "{009B90DA-9AC3-41D7-9611-5EA1C2E1812F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booker.Web", "Booker.Web\Booker.Web.csproj", "{F2518098-8C14-4A0D-96A0-4C29FBCE188F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booker.Web", "Booker.Web\Booker.Web.csproj", "{F2518098-8C14-4A0D-96A0-4C29FBCE188F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booker.Web.Tests", "Booker.Web.Tests\Booker.Web.Tests.csproj", "{F7E0511F-749C-407B-904F-069B0DDD81F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{F2518098-8C14-4A0D-96A0-4C29FBCE188F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2518098-8C14-4A0D-96A0-4C29FBCE188F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2518098-8C14-4A0D-96A0-4C29FBCE188F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7E0511F-749C-407B-904F-069B0DDD81F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7E0511F-749C-407B-904F-069B0DDD81F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7E0511F-749C-407B-904F-069B0DDD81F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7E0511F-749C-407B-904F-069B0DDD81F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
