@@ -2,11 +2,11 @@
 @model Booker.Web.Pages.BookEventModel
 @{
     ViewData["Title"] = "Book a Event";
-
+}
     <h1 class="display-4">Book a Event</h1>
     <p. class="lead">choose a event in our <b>web page</b> </p.>
 
-    <form action="/" method="post">
+    <form  method="post">
 
         <div class="form-group">
             <label asp-for="EventBookingRequest.FirstName" class="control-label"></label>
@@ -32,6 +32,6 @@
             <input asp-for="EventBookingRequest.DateTime" asp-format="{0:dd/MM/yyyy}" class="form-control" />
             <span asp-validation-for="EventBookingRequest.DateTime" class="text-danger"></span>
         </div>
-
+        <button type="submit" class="btn-primary btn" >Book a event</button>
     </form>
-}
+
