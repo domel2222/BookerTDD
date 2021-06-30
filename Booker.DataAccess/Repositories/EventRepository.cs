@@ -10,9 +10,9 @@ namespace Booker.DataAccess.Repositories
 {
     public class EventRepository : IEventRepository
     {
-        private readonly EventBookerContext _context;
+        private readonly EventDbContext _context;
 
-        public EventRepository(EventBookerContext context)
+        public EventRepository(EventDbContext context)
         {
             this._context = context;
         }
@@ -20,7 +20,8 @@ namespace Booker.DataAccess.Repositories
         public IEnumerable<Event> GetAll()
         {
 
-            return _context.Events.OrderBy(x => x.Id);
+            var ccc = _context.Events.OrderBy(x => x.Id);
+            return ccc;
         }
         // to refactor this method
         public IEnumerable<Event> GetAvailableEvent(DateTime dateBook)

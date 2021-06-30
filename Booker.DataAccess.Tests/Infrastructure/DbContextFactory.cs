@@ -9,13 +9,13 @@ namespace Booker.DataAccess.Tests.Infrastructure
 {
     public class DbContextFactory
     {
-        public static EventBookerContext CreateDb(string name)
+        public static EventDbContext CreateDb(string name)
         {
-            var options = new DbContextOptionsBuilder<EventBookerContext>()
+            var options = new DbContextOptionsBuilder<EventDbContext>()
                     .UseInMemoryDatabase(name)
                     .Options;
 
-            return new EventBookerContext(options);
+            return new EventDbContext(options);
         }
     }
 }

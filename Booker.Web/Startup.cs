@@ -29,14 +29,15 @@ namespace Booker.Web
         {
             services.AddRazorPages();
 
-            services.AddDbContext<EventBookerContext>(option =>
+            services.AddDbContext<EventDbContext>(option =>
             {
                 option.UseInMemoryDatabase("DataBooking");
             });
 
+            //EnsureDataBaseExists(connection)
 
-            services.AddScoped<IEventRepository, EventRepository>();
-            services.AddScoped<IEventBookingRepository, EventBookingRepository>();
+            services.AddTransient<IEventRepository, EventRepository>();
+            services.AddTransient<IEventBookingRepository, EventBookingRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

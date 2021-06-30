@@ -10,9 +10,9 @@ namespace Booker.DataAccess.Repositories
 {
     public class EventBookingRepository : IEventBookingRepository
     {
-        private readonly EventBookerContext _context;
+        private readonly EventDbContext _context;
 
-        public EventBookingRepository(EventBookerContext context)
+        public EventBookingRepository(EventDbContext context)
         {
             this._context = context;
         }
