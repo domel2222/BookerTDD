@@ -15,7 +15,9 @@ namespace Booker.Web.Pages
 
         public void OnGet(int eventBookingid, string firstName, DateTime date)
         {
-            throw new NotImplementedException();
+            EventBookingId = eventBookingid;
+            FirstName = firstName;
+            Date = date;
         }
     }
 }
