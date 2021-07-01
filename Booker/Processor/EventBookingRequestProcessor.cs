@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Booker.Processor
 {
-    public class EventBookingRequestProcessor
+    public class EventBookingRequestProcessor : IEventBookingRequestProcessor
     {
         private readonly IEventBookingRepository _bookingRepository;
         private readonly IEventRepository _eventRepository;
