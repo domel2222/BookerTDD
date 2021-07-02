@@ -1,44 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
-using Shouldly;
-using Booker.Processor;
-using Moq;
-using Booker.Web.Pages;
+﻿using Booker.Enums;
 using Booker.Modals;
+using Booker.Processor;
+using Booker.Web.Pages;
+using Moq;
 using NSubstitute;
-using Booker.Enums;
+using Shouldly;
+using System.Linq;
+using Xunit;
 
 namespace Booker.Web.Tests
 {
     public class BookEventModelTests
     {
+        private readonly string  _errorValue = "No desk available for selected date";
+        private readonly string _errorName = "EventBookingRequest.DateTime";
+        private Mock<IEventBookingRequestProcessor> _processorMock;
+        private readonly BookEventModel _bookEventModel;
+        private readonly EventBookingResult _bookingResult;
+
+        public BookEventModelTests()
+        {
+            _bookingResult = new EventBookingResult
+            {
+                Code = EventBookingResultCode.Success
+            };
+
+            //mock
+            _processorMock = new Mock<IEventBookingRequestProcessor>();
+
+            _bookEventModel = new BookEventModel(_processorMock.Object)
+            {
+                EventBookingRequest = new EventBookingRequest()
+            };
+            _processorMock.Setup(x => x.BookEvent(_bookEventModel.EventBookingRequest))
+                .Returns(_bookingResult);
+
+            //nsubstitude
+        }
+
         [Theory]
         [InlineData(1, true)]
         [InlineData(0, false)]
         public void CallBookEventMethodOfProcesorIfModelValid_Mock(int expectedBookEvent, bool isModelValid)
         {
             //arrange 
-
-            var processorMock = new Mock<IEventBookingRequestProcessor>();
-
-            var bookEventModel = new BookEventModel(processorMock.Object)
-            {
-                EventBookingRequest = new EventBookingRequest()
-            };
             if (!isModelValid)
             {
-                bookEventModel.ModelState.AddModelError("KeyError", "Something wrong");
+                _bookEventModel.ModelState.AddModelError("KeyError", "Something wrong");
             }
 
             //act
-            bookEventModel.OnPost();
+            _bookEventModel.OnPost();
+
             //assert
             //processorMock.Verify(x => x.BookEvent(bookEventModel.EventBookingRequest), Times.Once);
-            processorMock.Verify(x => x.BookEvent(bookEventModel.EventBookingRequest), Times.Exactly(expectedBookEvent));
+            _processorMock.Verify(x => x.BookEvent(_bookEventModel.EventBookingRequest), Times.Exactly(expectedBookEvent));
         }
 
         [Theory]
@@ -53,6 +69,13 @@ namespace Booker.Web.Tests
             {
                 EventBookingRequest = new EventBookingRequest()
             };
+
+            procesorNSub.BookEvent(bookEventModel.EventBookingRequest)
+                .Returns(new EventBookingResult
+                {
+                    Code = EventBookingResultCode.Success
+                });
+
             if (!isModelValid)
             {
                 bookEventModel.ModelState.AddModelError("KeyError", "Something wrong");
@@ -72,27 +95,14 @@ namespace Booker.Web.Tests
         public void AddModelErrorIfNoEventIsAvailable_Mock()
         {
 
-            var errorValue = "No desk available for selected date";
-            var errorName = "EventBookingRequest.DateTime";
-
-            var processorMock = new Mock<IEventBookingRequestProcessor>();
-
-            var bookEventModel = new BookEventModel(processorMock.Object)
-            {
-                EventBookingRequest = new EventBookingRequest()
-            };
-
-            processorMock.Setup(x => x.BookEvent(bookEventModel.EventBookingRequest))
-                .Returns(new EventBookingResult
-                {
-                    Code = EventBookingResultCode.NoEventAvailable
-                });
+            //arrange 
+            _bookingResult.Code = EventBookingResultCode.NoEventAvailable;
 
             //act
-            bookEventModel.OnPost();
+            _bookEventModel.OnPost();
 
             //assert
-            var modelStateEntry = Assert.Contains(errorName, bookEventModel.ModelState);
+            var modelStateEntry = Assert.Contains(_errorName, _bookEventModel.ModelState);
 
             //var modelError = Assert.Single(modelStateEntry.Errors);
 
@@ -101,33 +111,31 @@ namespace Booker.Web.Tests
             //var modelError = ShouldBe(modelStateEntry.Errors);
             //Assert.Equal("No desk available for selected date", modelError.ErrorMessage);
 
-            errorValue.ShouldBe(modelError.ErrorMessage);
+            _errorValue.ShouldBe(modelError.ErrorMessage);
         }
 
         [Fact]
         public void NotAddModelErrorIfEventIsAvailable_Mock()
         {
-            var errorName = "EventBookingRequest.DateTime";
+            //arrange
+            _bookingResult.Code = EventBookingResultCode.Success;
 
-            var processorMock = new Mock<IEventBookingRequestProcessor>();
-
-            var bookEventModel = new BookEventModel(processorMock.Object)
-            {
-                EventBookingRequest = new EventBookingRequest()
-            };
-
-            processorMock.Setup(x => x.BookEvent(bookEventModel.EventBookingRequest))
-                .Returns(new EventBookingResult
-                {
-                    Code = EventBookingResultCode.Success
-                });
             //act
-            bookEventModel.OnPost();
+            _bookEventModel.OnPost();
 
             //assert
-
-            Assert.DoesNotContain(errorName, bookEventModel.ModelState);
+            Assert.DoesNotContain(_errorName, _bookEventModel.ModelState);
         }
 
+        [Fact(Skip = "Time will come")]
+        public void AddModelErrorIfNoEventIsAvailable_NSubstitude()
+        {
+
+        }
+        [Fact(Skip = "Time will come")]
+        public void NotAddModelErrorIfEventIsAvailable_NSubstitude()
+        {
+
+        }
     }
 }
