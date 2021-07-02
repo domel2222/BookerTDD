@@ -15,8 +15,10 @@ namespace Booker.Web.Tests
 {
     public class BookEventModelTests
     {
-        [Fact]
-        public void CallBookEventMethodOfProcesor_Mock()
+        [Theory]
+        [InlineData(1, true)]
+        [InlineData(0, false)]
+        public void CallBookEventMethodOfProcesorIfModelValid_Mock(int expectedBookEvent, bool isModelValid)
         {
             //arrange 
 
@@ -26,15 +28,21 @@ namespace Booker.Web.Tests
             {
                 EventBookingRequest = new EventBookingRequest()
             };
+            if (!isModelValid)
+            {
+                bookEventModel.ModelState.AddModelError("KeyError", "Something wrong");
+            }
 
             //act
             bookEventModel.OnPost();
             //assert
-            processorMock.Verify(x => x.BookEvent(bookEventModel.EventBookingRequest), Times.Once);
+            //processorMock.Verify(x => x.BookEvent(bookEventModel.EventBookingRequest), Times.Once);
+            processorMock.Verify(x => x.BookEvent(bookEventModel.EventBookingRequest), Times.Exactly(expectedBookEvent));
         }
-        [Fact]
-
-        public void CallBookEventMethodOfProcesor_NSubstitute()
+        [Theory]
+        [InlineData(1, true)]
+        [InlineData(0, false)]
+        public void CallBookEventMethodOfProcesorIfModelValid_NSubstitute(int expectedBookEvent, bool isModelValid)
         {
             //arrange
             var procesorNSub = Substitute.For<IEventBookingRequestProcessor>();
@@ -43,11 +51,17 @@ namespace Booker.Web.Tests
             {
                 EventBookingRequest = new EventBookingRequest()
             };
+            if (!isModelValid)
+            {
+                bookEventModel.ModelState.AddModelError("KeyError", "Something wrong");
+            }
+
             //act
 
             bookEventModel.OnPost();
             //assert
-            procesorNSub.Received().BookEvent(bookEventModel.EventBookingRequest);
+            //procesorNSub.Received().BookEvent(bookEventModel.EventBookingRequest);
+            procesorNSub.Received(expectedBookEvent).BookEvent(bookEventModel.EventBookingRequest);
 
         }
     }

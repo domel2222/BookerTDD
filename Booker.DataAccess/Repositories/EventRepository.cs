@@ -20,10 +20,10 @@ namespace Booker.DataAccess.Repositories
         public IEnumerable<Event> GetAll()
         {
 
-            var ccc = _context.Events.OrderBy(x => x.Id);
-            return ccc;
+            var result = _context.Events.OrderBy(x => x.Id);
+            return result;
         }
-        // to refactor this method
+        // for refactoring this method
         public IEnumerable<Event> GetAvailableEvent(DateTime dateBook)
         {
 

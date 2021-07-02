@@ -22,7 +22,6 @@ namespace Booker.Validation
             {
                 isValid = dateTime.TimeOfDay.Ticks == 0;
             }
-
             return isValid;
         }
 

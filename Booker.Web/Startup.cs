@@ -1,6 +1,7 @@
 using Booker.DataAccess;
 using Booker.DataAccess.Repositories;
 using Booker.DataInterfaces;
+using Booker.Processor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,16 +30,21 @@ namespace Booker.Web
         {
             services.AddRazorPages();
 
-            services.AddDbContext<EventDbContext>(option =>
-            {
-                option.UseInMemoryDatabase("DataBooking");
-            });
+            //services.AddDbContext<EventDbContext>(option =>
+            //{
+            //    option.UseInMemoryDatabase("DataBooking");
+            //});
 
-            //EnsureDataBaseExists(connection)
+            services.AddDbContext<EventDbContext>(options =>
+             options.UseSqlServer(Configuration.GetConnectionString("EventBase")));
 
-            services.AddTransient<IEventRepository, EventRepository>();
-            services.AddTransient<IEventBookingRepository, EventBookingRepository>();
+
+
+            services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IEventBookingRepository, EventBookingRepository>();
+            services.AddScoped<IEventBookingRequestProcessor, EventBookingRequestProcessor>();
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
