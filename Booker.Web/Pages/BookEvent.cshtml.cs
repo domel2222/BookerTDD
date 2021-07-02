@@ -23,15 +23,21 @@ namespace Booker.Web.Pages
         public EventBookingRequest EventBookingRequest { get; set; }
         public IActionResult OnPost()
         {
+            IActionResult actionResult = Page();
+
             if (ModelState.IsValid) 
             { 
                 var result = _eventBookingRequestProcessor.BookEvent(EventBookingRequest);
-                if (result.Code == EventBookingResultCode.NoEventAvailable)
+                if (result.Code == EventBookingResultCode.Success)
+                {
+                    actionResult = RedirectToPage();
+                }
+                else if  (result.Code == EventBookingResultCode.NoEventAvailable)
                 {
                     ModelState.AddModelError("EventBookingRequest.DateTime", "No desk available for selected date");
                 }
             }
-            return null;
+            return actionResult;
         }
     }
 }

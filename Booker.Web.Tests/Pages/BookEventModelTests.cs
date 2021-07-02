@@ -177,6 +177,10 @@ namespace Booker.Web.Tests
                 _bookEventModelNSub.ModelState.AddModelError("KeyError", "Something wrong");
             }
 
+            if (eventBookingResultCode.HasValue)
+            {
+                _bookingResult.Code = eventBookingResultCode.Value;
+            }
             //act
             IActionResult actionResult =  _bookEventModelNSub.OnPost();
 
