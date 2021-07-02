@@ -93,6 +93,7 @@ namespace Booker.Web.Tests
 
             //assert
             var modelStateEntry = Assert.Contains(errorName, bookEventModel.ModelState);
+
             //var modelError = Assert.Single(modelStateEntry.Errors);
 
             var modelError = (modelStateEntry.Errors).First();
@@ -101,8 +102,32 @@ namespace Booker.Web.Tests
             //Assert.Equal("No desk available for selected date", modelError.ErrorMessage);
 
             errorValue.ShouldBe(modelError.ErrorMessage);
-
-           
         }
+
+        [Fact]
+        public void NotAddModelErrorIfEventIsAvailable_Mock()
+        {
+            var errorName = "EventBookingRequest.DateTime";
+
+            var processorMock = new Mock<IEventBookingRequestProcessor>();
+
+            var bookEventModel = new BookEventModel(processorMock.Object)
+            {
+                EventBookingRequest = new EventBookingRequest()
+            };
+
+            processorMock.Setup(x => x.BookEvent(bookEventModel.EventBookingRequest))
+                .Returns(new EventBookingResult
+                {
+                    Code = EventBookingResultCode.Success
+                });
+            //act
+            bookEventModel.OnPost();
+
+            //assert
+
+            Assert.DoesNotContain(errorName, bookEventModel.ModelState);
+        }
+
     }
 }

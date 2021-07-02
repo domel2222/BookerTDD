@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Booker.Enums;
 using Booker.Modals;
 using Booker.Processor;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +25,11 @@ namespace Booker.Web.Pages
         {
             if (ModelState.IsValid) 
             { 
-                _eventBookingRequestProcessor.BookEvent(EventBookingRequest);
-                ModelState.AddModelError("EventBookingRequest.DateTime", "No desk available for selected date");
+                var result = _eventBookingRequestProcessor.BookEvent(EventBookingRequest);
+                if (result.Code == EventBookingResultCode.NoEventAvailable)
+                {
+                    ModelState.AddModelError("EventBookingRequest.DateTime", "No desk available for selected date");
+                }
             }
         }
     }

@@ -28,10 +28,11 @@ namespace Booker.DataAccess
             //.Build();
 
             // optionsBuilder.UseSqlServer(configuration.GetConnectionString("EventBase"));
-
+            if (!optionsBuilder.IsConfigured)
+            {
                 optionsBuilder.UseSqlServer(
                 "Server=LAPTOP-R3P7DCQ0\\SQLEXPRESS;Initial Catalog=EventBase;User ID=Dominik;Password=Dominik6002");
-
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
