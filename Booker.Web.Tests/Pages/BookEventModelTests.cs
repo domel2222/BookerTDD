@@ -8,6 +8,7 @@ using Moq;
 using NSubstitute;
 using Shouldly;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -186,6 +187,39 @@ namespace Booker.Web.Tests
 
             //assert
             actionResult.ShouldBeOfType(expectedActionType);
+        }
+
+        [Fact]
+        public void RedirectToBookEventConfirmationPage_NSubstitude()
+        {
+            // arrange 
+            _bookingResult.Code = EventBookingResultCode.Success;
+            _bookingResult.EventBookingId = 13;
+            _bookingResult.FirstName = "Marco";
+            _bookingResult.DateTime = new DateTime(2022, 2, 12);
+
+            //act
+            IActionResult actionResult = _bookEventModelNSub.OnPost();
+
+
+            //assert
+
+            var redirectToPageResult = actionResult.ShouldBeOfType<RedirectToPageResult>();
+
+            redirectToPageResult.PageName.ShouldBe("BookEventConfirmation");
+
+            IDictionary<string, object> routeValues = redirectToPageResult.RouteValues;
+
+            routeValues.Count().ShouldBe(3);
+
+            var eventBookingId = Assert.Contains("EventBookingId", routeValues);
+            _bookingResult.EventBookingId.ShouldBe(eventBookingId);
+
+            var firstName = Assert.Contains("FirstName", routeValues);
+            _bookingResult.FirstName.ShouldBe(firstName);
+
+            var dateTime = Assert.Contains("DateTime", routeValues);
+            _bookingResult.DateTime.ShouldBe(dateTime);
         }
     }
 }

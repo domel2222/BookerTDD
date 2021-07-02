@@ -30,7 +30,12 @@ namespace Booker.Web.Pages
                 var result = _eventBookingRequestProcessor.BookEvent(EventBookingRequest);
                 if (result.Code == EventBookingResultCode.Success)
                 {
-                    actionResult = RedirectToPage();
+                    actionResult = RedirectToPage("BookEventConfirmation", new
+                    {
+                        result.EventBookingId,
+                        result.FirstName,
+                        result.DateTime
+                    });
                 }
                 else if  (result.Code == EventBookingResultCode.NoEventAvailable)
                 {
