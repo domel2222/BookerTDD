@@ -14,8 +14,10 @@ namespace Booker.Web.Tests
     {
         private readonly string  _errorValue = "No desk available for selected date";
         private readonly string _errorName = "EventBookingRequest.DateTime";
-        private Mock<IEventBookingRequestProcessor> _processorMock;
-        private readonly BookEventModel _bookEventModel;
+        private readonly Mock<IEventBookingRequestProcessor> _processorMock;
+        private readonly IEventBookingRequestProcessor _procesorNSub;
+        private readonly BookEventModel _bookEventModelNSub;
+        private readonly BookEventModel _bookEventModelMock;
         private readonly EventBookingResult _bookingResult;
 
         public BookEventModelTests()
@@ -28,14 +30,24 @@ namespace Booker.Web.Tests
             //mock
             _processorMock = new Mock<IEventBookingRequestProcessor>();
 
-            _bookEventModel = new BookEventModel(_processorMock.Object)
+            _bookEventModelMock = new BookEventModel(_processorMock.Object)
             {
                 EventBookingRequest = new EventBookingRequest()
             };
-            _processorMock.Setup(x => x.BookEvent(_bookEventModel.EventBookingRequest))
+            _processorMock.Setup(x => x.BookEvent(_bookEventModelMock.EventBookingRequest))
                 .Returns(_bookingResult);
 
             //nsubstitude
+
+            _procesorNSub = Substitute.For<IEventBookingRequestProcessor>();
+
+            _bookEventModelNSub = new BookEventModel(_procesorNSub)
+            {
+                EventBookingRequest = new EventBookingRequest()
+            };
+
+            _procesorNSub.BookEvent(_bookEventModelNSub.EventBookingRequest)
+                .Returns(_bookingResult);
         }
 
         [Theory]
@@ -46,15 +58,15 @@ namespace Booker.Web.Tests
             //arrange 
             if (!isModelValid)
             {
-                _bookEventModel.ModelState.AddModelError("KeyError", "Something wrong");
+                _bookEventModelMock.ModelState.AddModelError("KeyError", "Something wrong");
             }
 
             //act
-            _bookEventModel.OnPost();
+            _bookEventModelMock.OnPost();
 
             //assert
             //processorMock.Verify(x => x.BookEvent(bookEventModel.EventBookingRequest), Times.Once);
-            _processorMock.Verify(x => x.BookEvent(_bookEventModel.EventBookingRequest), Times.Exactly(expectedBookEvent));
+            _processorMock.Verify(x => x.BookEvent(_bookEventModelMock.EventBookingRequest), Times.Exactly(expectedBookEvent));
         }
 
         [Theory]
@@ -63,31 +75,19 @@ namespace Booker.Web.Tests
         public void CallBookEventMethodOfProcesorIfModelValid_NSubstitute(int expectedBookEvent, bool isModelValid)
         {
             //arrange
-            var procesorNSub = Substitute.For<IEventBookingRequestProcessor>();
-
-            var bookEventModel = new BookEventModel(procesorNSub)
-            {
-                EventBookingRequest = new EventBookingRequest()
-            };
-
-            procesorNSub.BookEvent(bookEventModel.EventBookingRequest)
-                .Returns(new EventBookingResult
-                {
-                    Code = EventBookingResultCode.Success
-                });
 
             if (!isModelValid)
             {
-                bookEventModel.ModelState.AddModelError("KeyError", "Something wrong");
+                _bookEventModelNSub.ModelState.AddModelError("KeyError", "Something wrong");
             }
 
             //act
 
-            bookEventModel.OnPost();
+            _bookEventModelNSub.OnPost();
 
             //assert
             //procesorNSub.Received().BookEvent(bookEventModel.EventBookingRequest);
-            procesorNSub.Received(expectedBookEvent).BookEvent(bookEventModel.EventBookingRequest);
+            _procesorNSub.Received(expectedBookEvent).BookEvent(_bookEventModelNSub.EventBookingRequest);
 
         }
 
@@ -99,10 +99,10 @@ namespace Booker.Web.Tests
             _bookingResult.Code = EventBookingResultCode.NoEventAvailable;
 
             //act
-            _bookEventModel.OnPost();
+            _bookEventModelMock.OnPost();
 
             //assert
-            var modelStateEntry = Assert.Contains(_errorName, _bookEventModel.ModelState);
+            var modelStateEntry = Assert.Contains(_errorName, _bookEventModelMock.ModelState);
 
             //var modelError = Assert.Single(modelStateEntry.Errors);
 
@@ -121,20 +121,42 @@ namespace Booker.Web.Tests
             _bookingResult.Code = EventBookingResultCode.Success;
 
             //act
-            _bookEventModel.OnPost();
+            _bookEventModelMock.OnPost();
 
             //assert
-            Assert.DoesNotContain(_errorName, _bookEventModel.ModelState);
+            Assert.DoesNotContain(_errorName, _bookEventModelMock.ModelState);
         }
 
-        [Fact(Skip = "Time will come")]
+        //[Fact(Skip = "Time will come")]
+        [Fact]
         public void AddModelErrorIfNoEventIsAvailable_NSubstitude()
         {
+            //arrange 
+            _bookingResult.Code = EventBookingResultCode.NoEventAvailable;
 
+            //act
+            _bookEventModelNSub.OnPost();
+
+            //assert
+
+            var modelStateEntry = Assert.Contains(_errorName, _bookEventModelNSub.ModelState);
+
+            var modelError = modelStateEntry.Errors.First();
+
+            _errorValue.ShouldBe(modelError.ErrorMessage);
         }
-        [Fact(Skip = "Time will come")]
+
+        [Fact]
         public void NotAddModelErrorIfEventIsAvailable_NSubstitude()
         {
+            //arrange
+            _bookingResult.Code = EventBookingResultCode.Success;
+
+            //act
+            _bookEventModelNSub.OnPost();
+
+            //assert
+            Assert.DoesNotContain(_errorValue, _bookEventModelNSub.ModelState);
 
         }
     }
