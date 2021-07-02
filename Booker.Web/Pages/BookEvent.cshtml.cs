@@ -21,7 +21,7 @@ namespace Booker.Web.Pages
 
         [BindProperty]
         public EventBookingRequest EventBookingRequest { get; set; }
-        public void OnPost()
+        public IActionResult OnPost()
         {
             if (ModelState.IsValid) 
             { 
@@ -31,6 +31,7 @@ namespace Booker.Web.Pages
                     ModelState.AddModelError("EventBookingRequest.DateTime", "No desk available for selected date");
                 }
             }
+            return null;
         }
     }
 }

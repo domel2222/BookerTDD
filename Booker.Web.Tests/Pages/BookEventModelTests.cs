@@ -2,9 +2,12 @@
 using Booker.Modals;
 using Booker.Processor;
 using Booker.Web.Pages;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Moq;
 using NSubstitute;
 using Shouldly;
+using System;
 using System.Linq;
 using Xunit;
 
@@ -158,6 +161,27 @@ namespace Booker.Web.Tests
             //assert
             Assert.DoesNotContain(_errorValue, _bookEventModelNSub.ModelState);
 
+        }
+
+        [Theory]
+        [InlineData(typeof(PageResult), false, null)]
+        [InlineData(typeof(PageResult), true, EventBookingResultCode.NoEventAvailable)]
+        [InlineData(typeof(RedirectToPageResult), true, EventBookingResultCode.Success)]
+        public void ReturnExpectedActionResult_NSubstitude(Type expectedActionType, 
+                                                bool isModelValid, 
+                                                EventBookingResultCode? eventBookingResultCode)
+        {
+            //arrange
+            if (!isModelValid)
+            {
+                _bookEventModelNSub.ModelState.AddModelError("KeyError", "Something wrong");
+            }
+
+            //act
+            IActionResult actionResult =  _bookEventModelNSub.OnPost();
+
+            //assert
+            actionResult.ShouldBeOfType(expectedActionType);
         }
     }
 }
