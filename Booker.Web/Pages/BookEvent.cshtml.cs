@@ -22,7 +22,11 @@ namespace Booker.Web.Pages
         public EventBookingRequest EventBookingRequest { get; set; }
         public void OnPost()
         {
-            _eventBookingRequestProcessor.BookEvent(EventBookingRequest);
+            if (ModelState.IsValid) 
+            { 
+                _eventBookingRequestProcessor.BookEvent(EventBookingRequest);
+                ModelState.AddModelError("EventBookingRequest.DateTime", "No desk available for selected date");
+            }
         }
     }
 }

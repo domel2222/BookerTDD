@@ -10,6 +10,7 @@ using Moq;
 using Booker.Web.Pages;
 using Booker.Modals;
 using NSubstitute;
+using Booker.Enums;
 
 namespace Booker.Web.Tests
 {
@@ -39,6 +40,7 @@ namespace Booker.Web.Tests
             //processorMock.Verify(x => x.BookEvent(bookEventModel.EventBookingRequest), Times.Once);
             processorMock.Verify(x => x.BookEvent(bookEventModel.EventBookingRequest), Times.Exactly(expectedBookEvent));
         }
+
         [Theory]
         [InlineData(1, true)]
         [InlineData(0, false)]
@@ -59,10 +61,48 @@ namespace Booker.Web.Tests
             //act
 
             bookEventModel.OnPost();
+
             //assert
             //procesorNSub.Received().BookEvent(bookEventModel.EventBookingRequest);
             procesorNSub.Received(expectedBookEvent).BookEvent(bookEventModel.EventBookingRequest);
 
+        }
+
+        [Fact]
+        public void AddModelErrorIfNoEventIsAvailable_Mock()
+        {
+
+            var errorValue = "No desk available for selected date";
+            var errorName = "EventBookingRequest.DateTime";
+
+            var processorMock = new Mock<IEventBookingRequestProcessor>();
+
+            var bookEventModel = new BookEventModel(processorMock.Object)
+            {
+                EventBookingRequest = new EventBookingRequest()
+            };
+
+            processorMock.Setup(x => x.BookEvent(bookEventModel.EventBookingRequest))
+                .Returns(new EventBookingResult
+                {
+                    Code = EventBookingResultCode.NoEventAvailable
+                });
+
+            //act
+            bookEventModel.OnPost();
+
+            //assert
+            var modelStateEntry = Assert.Contains(errorName, bookEventModel.ModelState);
+            //var modelError = Assert.Single(modelStateEntry.Errors);
+
+            var modelError = (modelStateEntry.Errors).First();
+
+            //var modelError = ShouldBe(modelStateEntry.Errors);
+            //Assert.Equal("No desk available for selected date", modelError.ErrorMessage);
+
+            errorValue.ShouldBe(modelError.ErrorMessage);
+
+           
         }
     }
 }

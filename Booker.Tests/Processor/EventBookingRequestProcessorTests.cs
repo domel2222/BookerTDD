@@ -73,7 +73,7 @@ namespace Booker.Tests.Processor
         }
 
         [Fact]
-        public void ShouldSaveEventBooking()
+        public void SaveEventBooking_NSubstitude()
         {
             //_availableEvent.Clear();
             EventBooking savedBooking = null;
@@ -103,7 +103,7 @@ namespace Booker.Tests.Processor
 
 
         [Fact]
-        public void Save_EventBookingMoc()
+        public void SaveEventBooking_Mock()
         {
             //_availableEvent.Clear();
             EventBooking savedBooking = null;
@@ -168,7 +168,7 @@ namespace Booker.Tests.Processor
         [Theory]
         [InlineData(5, true)]
         [InlineData(null, false)]
-        public void ShouldReturnExpectedEventBookingIdMoq(
+        public void ShouldReturnExpectedEventBookingId_Mock(
             int? expectedEventId,
             bool isAvaliable)
         {
@@ -192,7 +192,7 @@ namespace Booker.Tests.Processor
         [Theory]
         [InlineData(5, true)]
         [InlineData(null, false)]
-        public void ShouldReturnExpectedEventBookingIdNSubstitude(
+        public void ShouldReturnExpectedEventBookingId_NSubstitude(
             int? expectedEventId,
             bool isAvaliable)
         {
