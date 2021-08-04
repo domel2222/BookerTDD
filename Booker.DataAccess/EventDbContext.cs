@@ -30,8 +30,11 @@ namespace Booker.DataAccess
             // optionsBuilder.UseSqlServer(configuration.GetConnectionString("EventBase"));
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(
-                "Server=LAPTOP-R3P7DCQ0\\SQLEXPRESS;Initial Catalog=EventBase;User ID=Dominik;Password=Dominik6002");
+                //hide connection string
+                Console.WriteLine(" not working ");
+        {
+
+        }
             }
         }
 

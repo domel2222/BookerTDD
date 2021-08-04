@@ -56,6 +56,8 @@ namespace Booker.Tests.Processor
 
             result.ShouldNotBeNull();
 
+            
+
             result.FirstName.ShouldBe(_request.FirstName);
             result.LastName.ShouldBe(_request.LastName);
             result.Email.ShouldBe(_request.Email);
@@ -99,6 +101,7 @@ namespace Booker.Tests.Processor
             _request.Email.ShouldBe(savedBooking.Email);
             _request.DateTime.ShouldBe(savedBooking.DateTime);
             _availableEvent.First().Id.ShouldBe(savedBooking.EventId);
+            _availableEvent.Single().Id.ShouldBe(savedBooking.EventId);
         }
 
 
